@@ -101,7 +101,7 @@ function draw() {
   ctx.fillText(`Zoom: ${(scale * 100).toFixed(2)}%`, viewport.x + 440, viewport.y + 295);
 
   ctx.font = '8px Arial';
-  ctx.fillText(`(${cursor.WorldX.toFixed(2)}, ${cursor.WorldX.toFixed(2)})`, cursor.CanvasX, cursor.CanvasY)
+  ctx.fillText(`(${cursor.WorldX.toFixed(2)}, ${cursor.WorldY.toFixed(2)})`, cursor.WorldX * scale, cursor.WorldY * scale)
 
   ctx.restore();
 }
@@ -143,30 +143,29 @@ function panViewport(e) {
   panningY = e.clientY;
 }
 
-function updateCursorPos(e) {
-  cursor.CanvasX = viewport.x + e.clientX;
-  cursor.CanvasY = viewport.y + e.clientY;
+function updateCursorPos(e = null) {
+  if (e) {
+    cursor.CanvasX = e.clientX;
+    cursor.CanvasY = e.clientY;
+  }
 
-  cursor.WorldX = cursor.CanvasX / scale;
-  cursor.WorldY = cursor.CanvasX / scale;
+  cursor.WorldX = (viewport.x + cursor.CanvasX) / scale;
+  cursor.WorldY = (viewport.y + cursor.CanvasY) / scale;
 }
 
 function trackBox() {
   if (!currentlyTracking) return;
   
   const box = currentlyTracking;
-  viewport.x = box.position.x * scale - canvas.width / 2;
+  viewport.x = box.position.x * scale - canvas.width / 2; // keeps the tracked box at the center of the viewport at all times
   viewport.y = box.position.y * scale - canvas.height / 2;
+  updateCursorPos();
 }
 
 function moveBoxes() {
   boxObjects.forEach((value, key) => {
     value.isMoving = !value.isMoving;
   })
-}
-
-function worldToCanvas(pos) {
-  return pos * scale;
 }
 
 function init() {
@@ -194,7 +193,7 @@ canvas.addEventListener('mousedown', (e) => {
 })
 
 canvas.addEventListener('mousemove', (e) => {
-  updateCursorPos(e)
+  updateCursorPos(e);
   if (isDragging) {
   panViewport(e);
   }
@@ -207,22 +206,13 @@ canvas.addEventListener('mouseup', () => {
 
 canvas.addEventListener('wheel', (e) => {
   e.preventDefault();
+  canvas.style.cursor = e.deltaY > 0 ? 'zoom-out' : 'zoom-in';
   const zoomMultiplier = 0.001;
-  const oldScale = scale;
   scale -= e.deltaY * zoomMultiplier; 
-  scale = Math.max(0.001, Math.min(scale, 5));
+  scale = Math.max(0.01, Math.min(scale, 5));
 
-  //const mouseX = e.clientX * scale - canvas.getBoundingClientRect().left;
-  //const mouseY = e.clientY * scale - canvas.getBoundingClientRect().top;
-//
-  //const worldX = (mouseX + viewport.x) / oldScale;
-  //const worldY = (mouseY + viewport.y) / oldScale;
-//
-  //viewport.x = worldX * scale - mouseX;
-  //viewport.y = worldY * scale - mouseY;
-  updateCursorPos();
-  viewport.x = e.clientX * scale - canvas.width / 2;
-  viewport.y = e.clientY * scale - canvas.height / 2;
+  viewport.x = cursor.WorldX * scale - canvas.width / 2;
+  viewport.y = cursor.WorldY * scale - canvas.height / 2;
 })
 
 function hashPosition(x, y) {
