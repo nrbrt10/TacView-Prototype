@@ -6,7 +6,6 @@ const ctx = canvas.getContext('2d');
 
 const boxObjects = new Map();
 const boxListElements = new Map();
-const boxPositions = new Map();
 
 let scale = 1;
 
@@ -80,14 +79,17 @@ class MovingBox {
       this.moveBox();
     }
     ctx.fillStyle = this.color;
-    ctx.fillRect(this.position.x * scale, this.position.y * scale, Math.max(.8, 10 * scale), Math.max(.8, 10 * scale))
-    ctx.font = "6px Arial";
+    const scaledSize = Math.max(2, 10 * scale);
+    const scaledFont = Math.min(12, Math.max(6, 6 * scale));
+    ctx.fillRect(this.position.x * scale, this.position.y * scale, scaledSize, scaledSize)
+
+    ctx.font = `${scaledFont}px Arial`;
     ctx.fillText(`(${this.position.x.toFixed(1)}, ${this.position.y.toFixed(1)})`, (this.position.x + 10) * scale, (this.position.y) * scale);
   }
 }
 
 function draw() {
-  ctx.clearRect(0, 0, canvas.clientWidth, canvas.height);
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.save();
 
   trackBox();
@@ -101,13 +103,13 @@ function draw() {
   ctx.fillText(`Zoom: ${(scale * 100).toFixed(2)}%`, viewport.x + 440, viewport.y + 295);
 
   ctx.font = '8px Arial';
-  ctx.fillText(`(${cursor.WorldX.toFixed(2)}, ${cursor.WorldY.toFixed(2)})`, cursor.WorldX * scale, cursor.WorldY * scale)
+  ctx.fillText(`(${cursor.WorldX.toFixed(2)}, ${cursor.WorldY.toFixed(2)})`, cursor.CanvasX, cursor.CanvasY)
 
   ctx.restore();
 }
 
 function populateText() {
-  heading.textContent = `Viewport position: ${(viewport.x / scale).toFixed(4)}: ${(viewport.y / scale).toFixed(4)}`
+  heading.textContent = `Viewport position: ${(viewport.x / scale).toFixed(4)}: ${(viewport.y / scale).toFixed(4)}, ${(viewport.x)}: ${(viewport.y)}`
 
   if (boxList.childElementCount === 0) {
     boxObjects.forEach((value, key) => {
@@ -125,7 +127,7 @@ function populateText() {
 
   boxObjects.forEach((value, key) => {
     const position = value.position;
-    boxListElements.get(key).textContent = `${key}: ${position.x.toFixed(4)}, ${position.y.toFixed(4)}`;
+    boxListElements.get(key).textContent = `${key}: ${position.x.toFixed(4)}, ${position.y.toFixed(4)}, ${position.x * scale}, ${position.y * scale}`;
   });
 }
 
@@ -145,21 +147,38 @@ function panViewport(e) {
 
 function updateCursorPos(e = null) {
   if (e) {
-    cursor.CanvasX = e.clientX;
-    cursor.CanvasY = e.clientY;
+    cursor.lastPosX = e.clientX;
+    cursor.lastPoxY = e.clientY;
   }
 
-  cursor.WorldX = (viewport.x + cursor.CanvasX) / scale;
-  cursor.WorldY = (viewport.y + cursor.CanvasY) / scale;
+  cursor.CanvasX = viewport.x + cursor.lastPosX;
+  cursor.CanvasY = viewport.y + cursor.lastPoxY;
+  
+  cursor.WorldX = cursor.CanvasX / scale;
+  cursor.WorldY = cursor.CanvasY / scale;
 }
 
 function trackBox() {
   if (!currentlyTracking) return;
   
   const box = currentlyTracking;
-  viewport.x = box.position.x * scale - canvas.width / 2; // keeps the tracked box at the center of the viewport at all times
-  viewport.y = box.position.y * scale - canvas.height / 2;
+  centerViewportOn(box.position.x * scale, box.position.y * scale);
   updateCursorPos();
+}
+
+function zoomViewport(e) {
+  const zoomMultiplier = 0.001;
+  const oldScale = scale
+  scale -= (e.deltaY - e.deltaY % 100) * zoomMultiplier; 
+  scale = Math.max(0.1, Math.min(scale, 5));
+  
+  if (currentlyTracking) return;
+  centerViewportOn(cursor.CanvasX / oldScale, cursor.CanvasY / oldScale);
+}
+
+function centerViewportOn(x, y) {
+  viewport.x = x - canvas.width / 2;
+  viewport.y = y - canvas.height / 2;
 }
 
 function moveBoxes() {
@@ -207,12 +226,7 @@ canvas.addEventListener('mouseup', () => {
 canvas.addEventListener('wheel', (e) => {
   e.preventDefault();
   canvas.style.cursor = e.deltaY > 0 ? 'zoom-out' : 'zoom-in';
-  const zoomMultiplier = 0.001;
-  scale -= e.deltaY * zoomMultiplier; 
-  scale = Math.max(0.01, Math.min(scale, 5));
-
-  viewport.x = cursor.WorldX * scale - canvas.width / 2;
-  viewport.y = cursor.WorldY * scale - canvas.height / 2;
+  zoomViewport(e);
 })
 
 function hashPosition(x, y) {

@@ -29,9 +29,6 @@ function testObj({x, y}){
   return {x, y}
 }
 
-const {x , y} = testObj({x: 1, y: 2});
-console.log(x , y)
-
 class Cursor {
   constructor() {
     this.positon = {x: 0, y: 0};
@@ -44,4 +41,47 @@ class Cursor {
 
 cursor = new Cursor();
 cursor.setPosition({x:1, y:5})
-console.log(cursor.positon)
+
+const TestInterface = {
+  pos: {x: 0, y: 0},
+  method1() {
+    throw new Error('method1 not implmeneted')
+  }
+};
+
+class testI {
+  constructor() {
+    Object.assign(this, TestInterface);
+  }
+  showPos() {
+    console.log(this.pos);
+  }
+}
+
+class Coord1 {
+  constructor() {
+    this.a1 = 1;
+    this.a2 = 2;
+  }
+
+  getXY() {
+    return {a1: this.x, a2: this.y};
+  }
+
+  remapReturn(func, keys = {x: 'someX', y: 'someY'}) {
+    const boundFunc = func.bind(this);
+    const {x, y} = boundFunc();
+    return {
+      [keys.x]: x,
+      [keys.y]: y
+    }
+
+  }
+}
+
+const coord = new Coord1();
+console.log(coord.getXY());
+console.log(coord.remapReturn(coord.getXY, {a1: 't1', a2: 't2'}));
+
+const t = {a: 1, b: 2}
+t.
