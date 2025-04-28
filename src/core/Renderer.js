@@ -82,8 +82,27 @@ export class Renderer {
     this.ctx.fillRect(canvasX, canvasY, scaledSize, scaledSize)
     
     this.ctx.font = `${scaledFont}px Arial`;
-    this.ctx.fillText(`(${x.toFixed(1)}, ${y.toFixed(1)})`, offsetX, offsetY);
-    
+    this.ctx.fillText(`(${x.toFixed(1)}, ${y.toFixed(1)})`, offsetX, offsetY); 
+  }
+
+  drawWorld() {
+     this.ctx.strokeStyle = '#ccc';
+     const {x, y} = this.viewport.position.getPosition();
+     const gridToScale = 200 * Position.scale;
+     for (let iX = (Math.floor(x / gridToScale) * gridToScale + gridToScale); iX <= x + this.canvas.width; iX += gridToScale) {
+      this.ctx.beginPath();
+      this.ctx.moveTo(iX, y)
+      this.ctx.lineTo(iX, y + this.canvas.height);
+      this.ctx.stroke();
+     }
+
+     for (let iY = (Math.floor(y / gridToScale) * gridToScale + gridToScale); iY <= y + this.canvas.width; iY += gridToScale) {
+      this.ctx.beginPath();
+      this.ctx.moveTo(x, iY)
+      this.ctx.lineTo(x + this.canvas.width, iY);
+      this.ctx.stroke();
+     }
+
   }
 
   drawHUD() {
@@ -98,10 +117,6 @@ export class Renderer {
     this.ctx.fillText(`(${worldX.toFixed(2)}, ${worldY.toFixed(2)})`, x, y)
   }
 
-  drawWorld() {
-
-  }
-
   restoreCanvas() {
     this.ctx.restore();
   }
@@ -109,6 +124,7 @@ export class Renderer {
   draw() {
     this.clearCanvas();
     this.updateViewport();
+    this.drawWorld();
     this.drawEntities();
     this.drawHUD();
     this.restoreCanvas();

@@ -79,9 +79,5 @@ class Coord1 {
   }
 }
 
-const coord = new Coord1();
-console.log(coord.getXY());
-console.log(coord.remapReturn(coord.getXY, {a1: 't1', a2: 't2'}));
-
-const t = {a: 1, b: 2}
-t.
+const x = 1135.21385
+console.log((Math.floor(x / 200) * 200 + 200))

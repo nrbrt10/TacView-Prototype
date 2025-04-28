@@ -16,8 +16,8 @@ export class Entity {
     }
   
     move() {
-      const {dx, dy} = this.movement;
-      this.position.applyDelta(dx, dy);
+      const {x, y} = this.movement;
+      this.position.applyDelta(x, y);
     }
   }
   
@@ -36,7 +36,7 @@ export class Entity {
   
     toggleEntityMovement(id = null) {
       if (id) {
-        this.getEntity(id).toggleMovemet();
+        this.getEntity(id).toggleMovement();
       } else {
         this.entities.forEach((entity, id) => {
           entity.toggleMovement();
@@ -46,6 +46,8 @@ export class Entity {
   
     moveEntities() {
       this.entities.forEach((entity, id) => {
+        if (!entity.isMoving) return;
+        
         entity.move()
       });
     }
