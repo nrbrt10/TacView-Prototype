@@ -1,5 +1,6 @@
 import { createViewportAPI } from '../core/Viewport.js';
 import { createEntityManagerAPI } from '../core/Entity.js';
+import { Position } from '../core/Position.js';
 
 export class UI {
     constructor(viewport, entityManager, headingElement, entityListElement) {
@@ -12,7 +13,7 @@ export class UI {
   
     updateHeading() {
       const {worldX, worldY} = this.viewportAPI.position.toWorld();
-      this.headingElement.textContent = `Viewport positon: ${worldX.toFixed(4)}: ${worldY.toFixed(4)}`
+      this.headingElement.textContent = `Viewport positon: ${worldX.toFixed(4)}: ${worldY.toFixed(4)} ; Viewport size: ${500 / Position.scale} x ${300 / Position.scale}`
     }
   
     populateEntityUL() {

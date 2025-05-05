@@ -38,7 +38,7 @@ export class Renderer {
     this.canvas.addEventListener('wheel', (e) => {
       e.preventDefault();
       this.canvas.style.cursor = e.deltaY > 0 ? 'zoom-out' : 'zoom-in';
-      this.viewport.zoomViewport(e.deltaY);
+      this.viewport.zoomViewport(e.deltaY, e.clientX, e.clientY);
     });
   }
 

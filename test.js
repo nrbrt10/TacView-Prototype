@@ -81,3 +81,13 @@ class Coord1 {
 
 const x = 1135.21385
 console.log((Math.floor(x / 200) * 200 + 200))
+
+function test() {
+  return {x: 1, y:2}
+}
+
+function rename({x, y}, keys = {xKey: 'newX', yKey: 'newY'}) {
+  return {[keys.xKey]: x, [keys.yKey]: y}
+}
+
+console.log(rename(test(), keys = {xKey: 'otherX', yKey: 'otherY'}))

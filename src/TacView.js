@@ -6,10 +6,10 @@ import { UI } from './ui/UI.js';
 
 export class TacView {
     constructor(canvas, heading, entitiesUL, entities) {
-      this.renderer = new Renderer(canvas);
-      this.viewport = new Viewport(canvas.width, canvas.height);
       this.pointer = new Pointer();
       this.entityManager = new EntityManager(entities);
+      this.viewport = new Viewport(this.pointer, canvas.width, canvas.height);
+      this.renderer = new Renderer(canvas);
       this.ui = new UI(this.viewport, this.entityManager, heading, entitiesUL);
   
       this.update = this.update.bind(this);
@@ -29,6 +29,7 @@ export class TacView {
     update() {
       this.entityManager.updateEntities();
       this.ui.updateUI()
+      this.renderer.updatePointer();
       this.renderer.draw();
   
       requestAnimationFrame(this.update);

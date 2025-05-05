@@ -7,6 +7,14 @@ export class Pointer {
     }
 
     getLastPosition() {
-       return this.lastPosition.renameReturnObject(this.position.getPosition, {xKey: 'lastPosX', yKey: 'lastPosY'});
+       return this.lastPosition.renameReturnObject(this.lastPosition.getPosition, {xKey: 'lastPosX', yKey: 'lastPosY'});
     }
   }
+
+export function createPointerAPI(PointerIntance) {
+  return {
+    position: PointerIntance.position,
+    lastPosition: PointerIntance.lastPosition,
+    getLastPosition: PointerIntance.getLastPosition.bind(PointerIntance)
+  }
+}
