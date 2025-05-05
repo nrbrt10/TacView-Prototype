@@ -27,6 +27,8 @@ export class Renderer {
       this.updatePointer(e.clientX, e.clientY);
       if (this.isDragging) {
         this.viewport.panViewport(e.clientX, e.clientY);
+      } else {
+        this.canvas.style.cursor = 'grab';
       }
     });
     
