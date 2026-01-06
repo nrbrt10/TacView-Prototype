@@ -1,11 +1,9 @@
 import { Position, CanvasPosition } from "./Position.js";
-import { createPointerAPI } from "./Pointer.js";
 
 export class Viewport {
-  constructor(pointer, canvasWidth, canvasHeight) {
+  constructor(canvasWidth, canvasHeight) {
     this.position = new CanvasPosition();
     this.panningTracker = new CanvasPosition();
-    this.pointer = createPointerAPI(pointer);
     
     this.entityToTrack = null;
     this.canvasDim = {width: canvasWidth, height: canvasHeight};
@@ -38,12 +36,18 @@ export class Viewport {
   zoomViewport(deltaY, clientX, clientY) {
     const zoomMultiplier = 0.001;
     const oldScale = Position.scale;
+    const {scaledX, scaledY} = Position.scale(clientX, clientY);  
+
     Position.scale -= (deltaY - deltaY % 100) * zoomMultiplier; 
     Position.scale = Math.max(0.1, Math.min(Position.scale, 5));
 
-    const {x, y} = this.pointer.position.getPosition()
+    if (!!this.entityToTrack) return;
+
+    
 
   }
+
+  
 }
 
 export function createViewportAPI(viewportInstance) {

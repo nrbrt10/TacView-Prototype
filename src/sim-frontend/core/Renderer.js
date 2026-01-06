@@ -15,56 +15,17 @@ export class Renderer {
     this.entities = entities;
   }
 
-  setListeners() {
-    this.canvas.addEventListener('mousedown', (e) => {
-      this.isDragging = true;
-      this.viewport.entityToTrack = null;
-      this.canvas.style.cursor = 'grabbing';
-      this.viewport.setPan(e.clientX, e.clientY);
-    })
-    
-    this.canvas.addEventListener('mousemove', (e) => {
-      this.updatePointer(e.clientX, e.clientY);
-      if (this.isDragging) {
-        this.viewport.panViewport(e.clientX, e.clientY);
-      } else {
-        this.canvas.style.cursor = 'grab';
-      }
-    });
-    
-    this.canvas.addEventListener('mouseup', () => {
-      this.isDragging = false;
-      this.canvas.style.cursor = 'grab';
-    });
-    
-    this.canvas.addEventListener('wheel', (e) => {
-      e.preventDefault();
-      this.canvas.style.cursor = e.deltaY > 0 ? 'zoom-out' : 'zoom-in';
-      this.viewport.zoomViewport(e.deltaY, e.clientX, e.clientY);
-    });
-  }
-
   clearCanvas() {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     this.ctx.save();
   }
 
-  updateViewport() {
+  moveViewport() {
     if (this.viewport.entityToTrack) {
       this.viewport.trackEntity();
     }
     const {x, y} = this.viewport.position.getPosition();
     this.ctx.translate(-x, -y);
-  }
-
-  updatePointer(clientX = null, clientY = null) {
-    if (clientX && clientY) {
-      this.pointer.lastPosition.setPosition(clientX, clientY);
-    }
-    const {x, y} = this.viewport.position.getPosition();
-    const {lastPosX, lastPosY} = this.pointer.getLastPosition();
-
-    this.pointer.position.setPosition(x + lastPosX, y + lastPosY);
   }
 
   drawEntities() {
@@ -104,7 +65,6 @@ export class Renderer {
       this.ctx.lineTo(x + this.canvas.width, iY);
       this.ctx.stroke();
      }
-
   }
 
   drawHUD() {
@@ -125,7 +85,7 @@ export class Renderer {
 
   draw() {
     this.clearCanvas();
-    this.updateViewport();
+    this.moveViewport();
     this.drawWorld();
     this.drawEntities();
     this.drawHUD();

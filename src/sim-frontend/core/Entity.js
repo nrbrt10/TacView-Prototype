@@ -1,4 +1,4 @@
-import { Position, WorldPosition } from "./Position.js";
+import { WorldPosition } from "./Position.js";
 
 export class Entity {
     constructor(color, position, movement) {
@@ -25,13 +25,17 @@ export class Entity {
     constructor(entityArray) {
       this.entities = new Map();
       this.entityArray = entityArray;
+
+      this.entitiesFromArray();
     }
   
     entitiesFromArray() {
+      console.log('Loading entities...')
       this.entityArray.forEach(element => {
         const entity = new Entity(element.color, element.initial_pos, element.movementFn);
         this.entities.set(element.color, entity);
       });
+      console.log('Entities loaded.')
     }
   
     toggleEntityMovement(id = null) {

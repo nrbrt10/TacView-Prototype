@@ -4,8 +4,8 @@ import { Position } from '../core/Position.js';
 
 export class UI {
     constructor(viewport, entityManager, headingElement, entityListElement) {
-      this.viewportAPI = createViewportAPI(viewport);
-      this.entityManagerAPI = createEntityManagerAPI(entityManager);
+      this.viewportAPI = viewport;
+      this.entityManagerAPI = entityManager;
       this.headingElement = headingElement;
       this.entityListElement = entityListElement;
       this.listedEntities = new Map();
@@ -13,7 +13,7 @@ export class UI {
   
     updateHeading() {
       const {worldX, worldY} = this.viewportAPI.position.toWorld();
-      this.headingElement.textContent = `Viewport positon: ${worldX.toFixed(4)}: ${worldY.toFixed(4)} ; Viewport size: ${500 / Position.scale} x ${300 / Position.scale}`
+      this.headingElement.textContent = `Viewport positon: ${worldX.toFixed(4)}: ${worldY.toFixed(4)} ; Viewport size: ${(500 / Position.scale).toFixed(4)} x ${(300 / Position.scale).toFixed(4)}`
     }
   
     populateEntityUL() {

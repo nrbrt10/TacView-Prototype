@@ -13,6 +13,14 @@ export class Position {
     static get scale() {
       return this._scale;
     }
+
+    static scale(x, y) {
+      return {scaledX: x / Position.scale, scaledY: y / Position.scale}
+    }
+
+    static descale(x, y) {
+      return {descaledX: x * Position.scale, y: descaledY * Position.scale}
+    }
   
     getPosition() {
       return {x: this.x, y: this.y};
@@ -46,11 +54,11 @@ export class Position {
     }
   
     toWorld() {{
-      throw new Error("Method toWorld() not implmented.");
+      throw new Error("Method toWorld() not implemented.");
     }}
   
     toCanvas() {{
-      throw new Error("Method toCanvas() not implmented.");
+      throw new Error("Method toCanvas() not implemented.");
     }}
   }
   
