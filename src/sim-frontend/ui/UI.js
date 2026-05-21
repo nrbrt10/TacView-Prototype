@@ -1,5 +1,3 @@
-import { createViewportAPI } from '../core/Viewport.js';
-import { createEntityManagerAPI } from '../core/Entity.js';
 import { Position } from '../core/Position.js';
 
 export class UI {

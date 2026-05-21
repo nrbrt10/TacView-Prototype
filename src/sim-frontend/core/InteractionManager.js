@@ -1,6 +1,3 @@
-import { Viewport } from "./Viewport.js";
-import { Pointer } from "./Pointer.js";
-
 export class InteractionManager {
     constructor(state, canvas, viewport, pointer) {
         this.state = state;
@@ -47,7 +44,6 @@ export class InteractionManager {
     }
 
     attachListeners() {
-
         this.canvas.addEventListener('mousedown', this.handleMouseDown);
         this.canvas.addEventListener('mousemove', this.handleMouseMove);
         this.canvas.addEventListener('mouseup', this.handleMouseUp);
